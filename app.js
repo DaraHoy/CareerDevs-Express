@@ -1,34 +1,49 @@
 var express = require('express');
 var app = express();
-var name = 'Dara';
-var d = new Date;
 
 app.use(express.static('public'));
 
-//Create an index route that refers to the following file requirement.
-app.get('/', function(req, res){
-    res.sendFile(__dirname + '/public/index.html');
+//normalize the data sent in the /cities route.
+//normalizing of the data should use a middleware function.
+app.param('city', function(req,res,next){
+    var city = req.params.city;
+    var state = city[0].toUpperCase() + city.slice(1).toLowerCase();
+    
+    req.stateName = state;
+    next();
 });
 
-//Create a ‘/name’ route that returns your name
-app.get('/name', function(req, res){
-    res.send(name);
-});
+var cities = {
+    'Providence': "Rhode Island",
+    'Boston': "Massachusetts",
+    'Newyork': "New York",
+    'Philidelphia': "Pennsylvania",
+    'Washington': "The U.S. capital, bordering the states of Maryland and Virginia."
+};
 
-//Create a /redirect route that sends you to /surprise with a moved permanently status code
-app.get('/redirect', function(req, res){
-   res.redirect(301, '/surprise'); 
-});
-
-//Create a route that returns the current date. You will need to look up how to get the current date.
-app.get('/date', function(req, res) {
-    res.send(d);
-});
-
-//Create a /cities route in your app.js file with at least 4 cities.
+//A '/cities' route that will display all cities. (minimum of 5 cities)
 app.get('/cities', function(req, res){
-    var cities = ['Providence', 'Boston', 'New York', 'Philadelphia'];
-    res.json(cities);
+    
+    if (req.query.limit >= 1) { 
+        res.json(cities.slice(0, req.query.limit));
+    } 
+//Return a status error if the limit is higher than the number of cities available in the list
+    else if(req.query.limit > cities.length) {
+        res.status(404, 'query limit is higher than the number of cities available');
+//All cities if 0 is provided or if limit query is omitted 
+    } else {
+        res.json(Object.keys(cities));
+    }
+});
+//Add a dynamic route to /cities. This should respond with the state that the city resides in.
+app.get('/cities/:city', function (req, res){
+    var state = cities[req.stateName];
+    //Dynamic route should return Not Found status code if the requested city is not available.
+    if (!state) {
+        res.status(404).json("No city found for " + req.params.city);
+    } else {
+        res.json(state);
+    }
 });
 
 app.listen(process.env.PORT);
