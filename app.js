@@ -23,6 +23,11 @@ var cities = {
     'Washington': "The U.S. capital, bordering the states of Maryland and Virginia."
 };
 
+app.delete('/cities/:city', function(req, res){
+   delete cities[req.city];
+   res.sendStatus(200);
+});
+
 app.post('/cities', parseUrlencoded, function(req, res){
     var newCity = req.body //returns form data
     if(newCity.city.length < 4){
