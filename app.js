@@ -1,5 +1,7 @@
 var express = require('express');
 var app = express();
+var bodyParser = require('body-parser');
+var parseUrlencoded = bodyParser.urlencoded({extended:false});
 
 app.use(express.static('public'));
 
@@ -16,14 +18,25 @@ app.param('city', function(req,res,next){
 var cities = {
     'Providence': "Rhode Island",
     'Boston': "Massachusetts",
-    'Newyork': "New York",
+    'Orlando': "Florida",
     'Philidelphia': "Pennsylvania",
     'Washington': "The U.S. capital, bordering the states of Maryland and Virginia."
 };
 
+app.post('/cities', parseUrlencoded, function(req, res){
+    var newCity = req.body //returns form data
+    if(newCity.city.length < 4){
+        res.status(400).json("Invalid city sumbission, city must have be at least 4 characters");
+    } else if (newCity.state.length < 2) {
+        res.status(400).json("Invalid state sumbission, state must have be at least 2 characters");
+    } else {
+        cities[newCity.city] = newCity.state; //adds new city to cities object
+        res.status(201).json(newCity.city);
+    }
+});
+
 //A '/cities' route that will display all cities. (minimum of 5 cities)
 app.get('/cities', function(req, res){
-    
     if (req.query.limit >= 1) { 
         res.json(cities.slice(0, req.query.limit));
     } 

@@ -8,12 +8,20 @@
     <title>Cities</title>
 </head>
 <body>
-    <h1>New England cities</h1>
+    <h1>Add city</h1>
     <form>
-        <select id="cities-list">
-            
-        </select>
+        <Legend>New City</Legend>
+        <input type="text" name="city" placeholder="City"/>
+        <input type="text" name="state" placeholder="State"/>
+        <input type="submit"/>
     </form>
+    <select id="cities-list">
+        
+    </select>
+    <h3 id="state">
+        
+    </h3>
+    
     <script type="text/javascript" src="jquery.js"></script>
     <!--Create JS file for the index.html file. that will make an ajax request to /cities and display each city inside the selection element.-->
     <script type="text/javascript" src="client.js"></script>
