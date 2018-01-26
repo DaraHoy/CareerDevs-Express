@@ -12,7 +12,7 @@ $(function() {
       type: 'POST', url: '/cities', data: cityData
     }).done(function(city){
         appendToList([city]);
-        form.trigger('reset');
+        form.trigger('reset'); //doesn't seem to work
     });
   });
   
@@ -39,11 +39,13 @@ $(function() {
         list.push($('<option>', {html: content}));
     }
     $('#cities-list').append(list);
+    
   }
   
-  $('#cities-list').on('click', 'a[data-city]', function(event){
+  //delete a city
+  $('#state').on('click', 'a[data-block]', function(event){
     // Add confirmation to delete
-    if (!confirm) {
+    if (!confirm('Are you sure?')) {
         return false;
     }
     
@@ -51,11 +53,11 @@ $(function() {
     
     $.ajax({
       type: 'DELETE',
-      url: `/cities/${target.data('city')}`
+      url: `/cities/${target.data('block')}`
     }).done(function(){
-      console.log('delete call!')
-      target.parent('option').remove();
-    })
+      console.log(`${target.data('block')}`);
+      target.parent('').remove();
+    });
   });
   
 });
