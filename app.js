@@ -5,6 +5,14 @@ var parseUrlencoded = bodyParser.urlencoded({extended:false});
 
 app.use(express.static('public'));
 
+//replacing repition with route instance
+var citiesRoute = app.route('/cities')
+
+    .delete('/cities/:city', function(req, res){
+       delete cities[req.city];
+       res.sendStatus(200);
+    });
+    
 //normalize the data sent in the /cities route.
 //normalizing of the data should use a middleware function.
 app.param('city', function(req,res,next){
@@ -23,10 +31,6 @@ var cities = {
     'Washington': "The U.S. capital, bordering the states of Maryland and Virginia."
 };
 
-app.delete('/cities/:city', function(req, res){
-   delete cities[req.city];
-   res.sendStatus(200);
-});
 
 app.post('/cities', parseUrlencoded, function(req, res){
     var newCity = req.body //returns form data
